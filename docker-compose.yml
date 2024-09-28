@@ -1,0 +1,16 @@
+services:
+  filedb:
+    image: mongo:latest
+    extra_hosts:
+      - "filedb:127.0.0.1"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - filedb-data:/data/db
+    ports:
+      - 27027:27017
+    command: mongod --logpath=/dev/null # --quiet
+
+volumes:
+  filedb-data:
