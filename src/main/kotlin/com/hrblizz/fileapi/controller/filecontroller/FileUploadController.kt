@@ -56,7 +56,11 @@ class FileUploadController(
             )
         } catch (e: IOException) {
             e.printStackTrace()
-            return ResponseEntity(null, listOf(ErrorMessage("Failed to upload file: ${e.message}")), HttpStatus.INTERNAL_SERVER_ERROR.value())
+            return ResponseEntity(
+                null,
+                listOf(ErrorMessage("Failed to upload file: ${e.message}")),
+                HttpStatus.INTERNAL_SERVER_ERROR.value()
+            )
         }
     }
 }
