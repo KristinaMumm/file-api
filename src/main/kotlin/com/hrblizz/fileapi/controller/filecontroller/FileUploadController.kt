@@ -52,7 +52,7 @@ class FileUploadController(
                 mapOf(
                     "token" to fileToken,
                 ),
-                HttpStatus.OK.value()
+                HttpStatus.CREATED.value()
             )
         } catch (e: IOException) {
             e.printStackTrace()
