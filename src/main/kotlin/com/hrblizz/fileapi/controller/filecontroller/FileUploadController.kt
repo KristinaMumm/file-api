@@ -18,9 +18,6 @@ import java.util.UUID.randomUUID
 class FileUploadController(
     private val fileRepository: EntityRepository
 ) {
-
-    private val uploadDir = "C:\\Users\\Kristina\\Documents\\mercans_test\\test-files\\uploads\\"
-
     @RequestMapping("/files", method = [RequestMethod.POST])
     fun postFile(@RequestParam("pdfFile") file: MultipartFile): ResponseEntity<Map<String, Any>> {
 
@@ -36,9 +33,9 @@ class FileUploadController(
 
         try {
 
-            File(uploadDir).mkdirs()
+            File(FileControllerConstants.FILES_DIRECTORY).mkdirs()
             val originalFilename = file.originalFilename ?: "file"
-            val fileToSave = File(uploadDir + originalFilename)
+            val fileToSave = File(FileControllerConstants.FILES_DIRECTORY + originalFilename)
             file.transferTo(fileToSave)
 
             fileRepository.save(

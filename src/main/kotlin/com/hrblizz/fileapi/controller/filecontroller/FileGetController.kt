@@ -20,13 +20,11 @@ class FileGetController(
     private val fileRepository: EntityRepository
 ) {
 
-    private val uploadDir = "C:\\Users\\Kristina\\Documents\\mercans_test\\test-files\\uploads\\"
-
     @RequestMapping("/file/{fileToken}", method = [RequestMethod.GET])
     fun getFile(@PathVariable fileToken: String, response: HttpServletResponse): ResponseEntity<Map<String, Any>>? {
         val file = fileRepository.findByToken(fileToken)
 
-        val filePath: Path = Paths.get(uploadDir + file.fileName)
+        val filePath: Path = Paths.get(FileControllerConstants.FILES_DIRECTORY + file.fileName)
 
         return if (Files.exists(filePath)) {
             response.contentType = MediaType.APPLICATION_PDF_VALUE
