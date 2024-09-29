@@ -29,7 +29,10 @@ class FileGetController(
         return if (Files.exists(filePath)) {
             response.contentType = MediaType.APPLICATION_PDF_VALUE
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"${file.fileName}\"")
-
+            response.setHeader("X-Filename", file.fileName)
+            response.setHeader("X-Filesize", Files.size(filePath).toString())
+            response.setHeader("X-CreateTime", file.createTime.toString())
+            
             Files.copy(filePath, response.outputStream)
             response.outputStream.flush()
             return null
