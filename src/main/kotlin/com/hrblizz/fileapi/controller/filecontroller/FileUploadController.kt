@@ -45,10 +45,9 @@ class FileUploadController(
         try {
             File(FileControllerConstants.FILES_DIRECTORY).mkdirs()
             val originalFilename = content.originalFilename ?: "file"
-            val fileToSave = File(FileControllerConstants.FILES_DIRECTORY + originalFilename)
-            content.transferTo(fileToSave)
-
             val filePath = Paths.get(FileControllerConstants.FILES_DIRECTORY + originalFilename)
+            content.transferTo(filePath)
+
             val formatter = SimpleDateFormat(FileControllerConstants.DATE_FORMAT)
 
             fileRepository.save(
