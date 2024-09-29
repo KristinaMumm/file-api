@@ -48,12 +48,14 @@ class FileUploadController(
             val fileToSave = File(FileControllerConstants.FILES_DIRECTORY + originalFilename)
             content.transferTo(fileToSave)
 
+            val filePath = Paths.get(FileControllerConstants.FILES_DIRECTORY + originalFilename)
             val formatter = SimpleDateFormat(FileControllerConstants.DATE_FORMAT)
 
             fileRepository.save(
                 Entity().also {
                     it.token = fileToken
                     it.fileName = originalFilename
+                    it.size = Files.size(filePath)
                     it.contentType = contentType
                     it.metadata = metadata
                     it.source = source

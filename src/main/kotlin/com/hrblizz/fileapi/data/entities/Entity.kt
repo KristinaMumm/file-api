@@ -7,6 +7,7 @@ class Entity {
     @Id
     lateinit var token: String
     lateinit var fileName: String
+    var size: Long = 0
     lateinit var contentType: String
     lateinit var metadata: String
     lateinit var source: String
