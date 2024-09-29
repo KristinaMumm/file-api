@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import java.util.UUID.randomUUID
 
 @RestController
@@ -21,14 +23,14 @@ class FileUploadController(
     private val fileRepository: EntityRepository
 ) {
     @RequestMapping("/files", method = [RequestMethod.POST])
-    fun postFile(@RequestParam("content") content: MultipartFile,
-                 @RequestParam("name") fileName : String,
-                 @RequestParam("contentType") contentType : String,
-                 @RequestParam("meta") metadata : String,
-                 @RequestParam("source") source : String,
-                 @RequestParam("expireTime") expireTime : String
-                 )
-    : ResponseEntity<Map<String, Any>> {
+    fun postFile(
+        @RequestParam("content") content: MultipartFile,
+        @RequestParam("name") fileName: String,
+        @RequestParam("contentType") contentType: String,
+        @RequestParam("meta") metadata: String,
+        @RequestParam("source") source: String,
+        @RequestParam("expireTime") expireTime: String
+    ): ResponseEntity<Map<String, Any>> {
 
         if (content.isEmpty) {
             return ResponseEntity(
@@ -61,9 +63,7 @@ class FileUploadController(
             )
 
             return ResponseEntity(
-                mapOf(
-                    "token" to fileToken,
-                ),
+                mapOf("token" to fileToken),
                 HttpStatus.CREATED.value()
             )
         } catch (e: IOException) {

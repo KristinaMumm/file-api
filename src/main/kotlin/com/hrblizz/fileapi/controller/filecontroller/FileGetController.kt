@@ -31,7 +31,7 @@ class FileGetController(
             response.setHeader("X-Filename", file.fileName)
             response.setHeader("X-Filesize", Files.size(filePath).toString())
             response.setHeader("X-CreateTime", file.createTime.toString())
-            
+
             Files.copy(filePath, response.outputStream)
             response.outputStream.flush()
             return null

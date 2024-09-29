@@ -10,12 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import java.io.File
 
-
 @RestController
 class FileDeleteController(
     private val fileRepository: EntityRepository
 ) {
-
     @RequestMapping("/file/{fileToken}", method = [RequestMethod.DELETE])
     fun deleteFile(@PathVariable fileToken: String): ResponseEntity<Map<String, Any>>? {
         val fileEntity = fileRepository.findByToken(fileToken)
@@ -28,6 +26,5 @@ class FileDeleteController(
             val errorMessage = listOf(ErrorMessage("File not found"))
             ResponseEntity(null, errorMessage, HttpStatus.NOT_FOUND.value())
         }
-
     }
 }
