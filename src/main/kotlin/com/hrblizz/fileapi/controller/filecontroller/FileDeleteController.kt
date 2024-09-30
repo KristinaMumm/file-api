@@ -24,7 +24,7 @@ class FileDeleteController(
             fileEntity = fileRepository.findByToken(fileToken)
         } catch (e: EmptyResultDataAccessException) {
             val errorMessage = listOf(ErrorMessage("Token not found"))
-            return ResponseEntity(null, errorMessage, HttpStatus.NOT_FOUND.value())
+            return ResponseEntity(null, errorMessage, HttpStatus.BAD_REQUEST.value())
         }
 
         val file = File(FileControllerConstants.FILES_DIRECTORY, fileEntity.fileName)

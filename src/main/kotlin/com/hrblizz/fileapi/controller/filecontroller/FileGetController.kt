@@ -29,7 +29,7 @@ class FileGetController(
             fileEntity = fileRepository.findByToken(fileToken)
         } catch (e: EmptyResultDataAccessException) {
             val errorMessage = listOf(ErrorMessage("Token not found"))
-            return ResponseEntity(null, errorMessage, HttpStatus.NOT_FOUND.value())
+            return ResponseEntity(null, errorMessage, HttpStatus.BAD_REQUEST.value())
         }
 
         val filePath: Path = Paths.get(FileControllerConstants.FILES_DIRECTORY + fileEntity.fileName)
@@ -46,7 +46,7 @@ class FileGetController(
             return null
         } else {
             val errorMessage = listOf(ErrorMessage("File not found"))
-            ResponseEntity(null, errorMessage, HttpStatus.NOT_FOUND.value())
+            ResponseEntity(null, errorMessage, HttpStatus.BAD_REQUEST.value())
         }
     }
 }
