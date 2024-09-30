@@ -31,12 +31,11 @@ class FileUploadController(
         @RequestParam("source") source: String,
         @RequestParam("expireTime") expireTime: String
     ): ResponseEntity<Map<String, Any>> {
-
         if (content.isEmpty) {
             return ResponseEntity(
                 null,
-                listOf(ErrorMessage("File not provided")),
-                HttpStatus.OK.value()
+                listOf(ErrorMessage("Content not provided")),
+                HttpStatus.BAD_REQUEST.value()
             )
         }
 
@@ -44,7 +43,7 @@ class FileUploadController(
 
         try {
             File(FileControllerConstants.FILES_DIRECTORY).mkdirs()
-            val originalFilename = content.originalFilename ?: "file"
+            val originalFilename = content.originalFilename ?: fileToken
             val filePath = Paths.get(FileControllerConstants.FILES_DIRECTORY + originalFilename)
             content.transferTo(filePath)
 
@@ -72,7 +71,7 @@ class FileUploadController(
             return ResponseEntity(
                 null,
                 listOf(ErrorMessage("Failed to upload file: ${e.message}")),
-                HttpStatus.INTERNAL_SERVER_ERROR.value()
+                HttpStatus.SERVICE_UNAVAILABLE.value()
             )
         }
     }
