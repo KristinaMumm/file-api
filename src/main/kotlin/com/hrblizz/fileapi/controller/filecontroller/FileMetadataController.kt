@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import com.hrblizz.fileapi.data.entities.Entity
 import com.hrblizz.fileapi.data.repository.EntityRepository
 import com.hrblizz.fileapi.rest.ResponseEntity
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,8 +17,15 @@ class FileMetadataController(
     private val fileRepository: EntityRepository
 ) {
 
-    fun getFileMetadata(token: String): Entity {
-        return fileRepository.findByToken(token)
+    fun getFileMetadata(token: String): Entity? {
+        val fileEntity : Entity
+
+        try {
+            fileEntity = fileRepository.findByToken(token)
+        } catch (e: EmptyResultDataAccessException) {
+            return null
+        }
+        return fileEntity
     }
 
     @RequestMapping("/files/metas", method = [RequestMethod.POST])
@@ -29,7 +37,10 @@ class FileMetadataController(
 
         val entityMap = mutableMapOf<String, Entity>()
         for (token in tokensList) {
-            entityMap[token] = getFileMetadata(token)
+            val entity = getFileMetadata(token)
+            if (entity != null) {
+                entityMap[token] = entity
+            }
         }
 
         return ResponseEntity(mapOf("files" to entityMap), HttpStatus.OK.value())
