@@ -2,6 +2,9 @@ package com.hrblizz.fileapi.controller.filecontroller
 
 import com.hrblizz.fileapi.data.entities.Entity
 import com.hrblizz.fileapi.data.repository.EntityRepository
+import com.hrblizz.fileapi.library.log.ExceptionLogItem
+import com.hrblizz.fileapi.library.log.LogItem
+import com.hrblizz.fileapi.library.log.Logger
 import com.hrblizz.fileapi.rest.ErrorMessage
 import com.hrblizz.fileapi.rest.ResponseEntity
 import org.springframework.dao.EmptyResultDataAccessException
@@ -18,7 +21,8 @@ import javax.servlet.http.HttpServletResponse
 
 @RestController
 class FileGetController(
-    private val fileRepository: EntityRepository
+    private val fileRepository: EntityRepository,
+    private val logger: Logger
 ) {
 
     @RequestMapping("/file/{fileToken}", method = [RequestMethod.GET])
@@ -28,13 +32,14 @@ class FileGetController(
         try {
             fileEntity = fileRepository.findByToken(fileToken)
         } catch (e: EmptyResultDataAccessException) {
-            val errorMessage = listOf(ErrorMessage("Token not found"))
-            return ResponseEntity(null, errorMessage, HttpStatus.BAD_REQUEST.value())
+            val errorMessage = "Token $fileToken not found"
+            logger.warning(ExceptionLogItem(errorMessage, e))
+            return ResponseEntity(null, listOf(ErrorMessage(errorMessage)), HttpStatus.BAD_REQUEST.value())
         }
 
         val filePath: Path = Paths.get(FileControllerConstants.FILES_DIRECTORY + fileEntity.fileName)
 
-        return if (Files.exists(filePath)) {
+        if (Files.exists(filePath)) {
             response.contentType = fileEntity.contentType
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"${fileEntity.fileName}\"")
             response.setHeader("X-Filename", fileEntity.fileName)
@@ -45,8 +50,9 @@ class FileGetController(
             response.outputStream.flush()
             return null
         } else {
-            val errorMessage = listOf(ErrorMessage("File not found"))
-            ResponseEntity(null, errorMessage, HttpStatus.BAD_REQUEST.value())
+            val errorMessage = "File ${fileEntity.fileName} not found"
+            logger.error(LogItem(errorMessage))
+            return ResponseEntity(null, listOf(ErrorMessage(errorMessage)), HttpStatus.BAD_REQUEST.value())
         }
     }
 }

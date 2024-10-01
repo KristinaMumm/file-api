@@ -4,6 +4,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.hrblizz.fileapi.data.entities.Entity
 import com.hrblizz.fileapi.data.repository.EntityRepository
+import com.hrblizz.fileapi.library.log.ExceptionLogItem
+import com.hrblizz.fileapi.library.log.Logger
 import com.hrblizz.fileapi.rest.ResponseEntity
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
@@ -14,17 +16,19 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class FileMetadataController(
-    private val fileRepository: EntityRepository
+    private val fileRepository: EntityRepository,
+    private val logger: Logger
 ) {
 
     fun getFileMetadata(token: String): Entity? {
-        val fileEntity : Entity
+        var fileEntity : Entity? = null
 
         try {
             fileEntity = fileRepository.findByToken(token)
         } catch (e: EmptyResultDataAccessException) {
-            return null
+            logger.warning(ExceptionLogItem("Token $token not found", e))
         }
+
         return fileEntity
     }
 

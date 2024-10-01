@@ -2,6 +2,9 @@ package com.hrblizz.fileapi.controller.filecontroller
 
 import com.hrblizz.fileapi.data.entities.Entity
 import com.hrblizz.fileapi.data.repository.EntityRepository
+import com.hrblizz.fileapi.library.log.ExceptionLogItem
+import com.hrblizz.fileapi.library.log.LogItem
+import com.hrblizz.fileapi.library.log.Logger
 import com.hrblizz.fileapi.rest.ErrorMessage
 import com.hrblizz.fileapi.rest.ResponseEntity
 import org.springframework.http.HttpStatus
@@ -20,7 +23,8 @@ import java.util.UUID.randomUUID
 
 @RestController
 class FileUploadController(
-    private val fileRepository: EntityRepository
+    private val fileRepository: EntityRepository,
+    private val logger: Logger
 ) {
     @RequestMapping("/files", method = [RequestMethod.POST])
     fun postFile(
@@ -31,6 +35,7 @@ class FileUploadController(
         @RequestParam("source") source: String,
         @RequestParam("expireTime") expireTime: String
     ): ResponseEntity<Map<String, Any>> {
+
         if (content.isEmpty) {
             return ResponseEntity(
                 null,
@@ -62,15 +67,18 @@ class FileUploadController(
                 }
             )
 
+            logger.info(LogItem("Uploaded file with token $fileToken"))
+
             return ResponseEntity(
                 mapOf("token" to fileToken),
                 HttpStatus.CREATED.value()
             )
         } catch (e: IOException) {
-            e.printStackTrace()
+            val errorMessage = "Failed to upload file: $fileName"
+            logger.error(ExceptionLogItem(errorMessage, e))
             return ResponseEntity(
                 null,
-                listOf(ErrorMessage("Failed to upload file: ${e.message}")),
+                listOf(ErrorMessage(errorMessage)),
                 HttpStatus.SERVICE_UNAVAILABLE.value()
             )
         }
