@@ -49,3 +49,4 @@ I do not have experience with Docker so everything that was related to it, took 
     - Make a new object, that takes next fields: file token, json field name, value. It is a good way to store information, when it is not known how many fields and what fields can be.
     - Connect somehow the new object with Entity one, if it is possible. Then the class FileMetadataController probably does not need changes. 
 - Add authentication to API
+- Think about tests
