@@ -2,6 +2,8 @@ openapi: 3.0.0
 info:
   version: '1.0.0'
   title: File API
+servers:
+  - url: http://localhost:6011
 
 paths:
   /status:
@@ -11,6 +13,163 @@ paths:
       responses:
         '200':
           description: It's a response.
+
+  /files:
+    post:
+      summary: File
+      description: Upload File.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  format: binary
+                  description: File to upload
+                name:
+                  type: string
+                  description: File name
+                contentType:
+                  type: string
+                  description: Type of content
+                meta:
+                  type: string
+                  description: String of JSON
+                source:
+                  type: string
+                expireTime:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: File is uploaded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        format: uuid
+                  errors:
+                    type: string
+                  status:
+                    type: integer
+                example:
+                  data:
+                    token: b0147381-2b35-4230-a280-00448fe0b2ce
+                  errors:
+                  status: 201
+        '400':
+          description: Bad request - file content not provided.
+        '503':
+          description: Service unavailable
+
+  /file/{fileToken}:
+    get:
+      summary: File
+      description: Get File by token.
+      responses:
+        '200':
+          description: File returned.
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad request - given token does not exist.
+        '503':
+          description: Service unavailable
+
+    delete:
+      summary: File
+      description: Delete File by token.
+      responses:
+        '200':
+          description: File is deleted.
+        '400':
+          description: Bad request - given token does not exist.
+        '503':
+          description: Service unavailable
+
+  /files/metas:
+    post:
+      summary: Metadata
+      description: Metadata of Files.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tokens:
+                  type: array
+                  items:
+                    type: string
+                  description: Array of file tokens
+                  example:
+                    - fef89cbf-88b7-4824-8bd2-9f49f2461f6e
+                    - 409c86de-9386-4fe4-af0b-cafdaf0215b4
+                    - b0147381-2b35-4230-a280-00448fe0b2ce
+      responses:
+        '200':
+          description: Metadata returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/metas'
+
+
+components:
+  schemas:
+    metas:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            files:
+              type: object
+              properties:
+                fileToken:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+                      format: uuid
+                    fileName:
+                      type: string
+                    size:
+                      type: integer
+                    contentType:
+                      type: string
+                    meta:
+                      type: string
+                    source:
+                      type: string
+                    expireTime:
+                      type: string
+                      format: date-time
+                    createTime:
+                      type: string
+                      format: date-time
+        errors:
+          type: string
+        status:
+          type: integer
+
 
 security:
   - basicAuth: []
