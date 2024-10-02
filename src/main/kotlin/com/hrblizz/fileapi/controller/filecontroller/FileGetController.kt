@@ -52,7 +52,7 @@ class FileGetController(
         } else {
             val errorMessage = "File ${fileEntity.fileName} not found"
             logger.error(LogItem(errorMessage))
-            return ResponseEntity(null, listOf(ErrorMessage(errorMessage)), HttpStatus.BAD_REQUEST.value())
+            return ResponseEntity(null, listOf(ErrorMessage(errorMessage)), HttpStatus.SERVICE_UNAVAILABLE.value())
         }
     }
 }
