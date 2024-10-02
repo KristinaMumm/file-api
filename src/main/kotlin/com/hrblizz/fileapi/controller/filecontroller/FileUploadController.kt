@@ -31,7 +31,7 @@ class FileUploadController(
         @RequestParam("content") content: MultipartFile,
         @RequestParam("name") fileName: String,
         @RequestParam("contentType") contentType: String,
-        @RequestParam("meta") metadata: String,
+        @RequestParam("meta") meta: String,
         @RequestParam("source") source: String,
         @RequestParam("expireTime") expireTime: String
     ): ResponseEntity<Map<String, Any>> {
@@ -60,7 +60,7 @@ class FileUploadController(
                     it.fileName = originalFilename
                     it.size = Files.size(filePath)
                     it.contentType = contentType
-                    it.metadata = metadata
+                    it.meta = meta
                     it.source = source
                     it.expireTime = formatter.parse(expireTime)
                     it.createTime = Date()

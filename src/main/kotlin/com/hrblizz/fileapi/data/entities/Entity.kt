@@ -9,7 +9,7 @@ class Entity {
     lateinit var fileName: String
     var size: Long = 0
     lateinit var contentType: String
-    lateinit var metadata: String
+    lateinit var meta: String
     lateinit var source: String
     lateinit var expireTime: Date
     lateinit var createTime: Date
